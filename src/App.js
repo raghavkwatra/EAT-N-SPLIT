@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const initialFriends = [
   {
     id: 118836,
@@ -19,6 +21,99 @@ const initialFriends = [
   },
 ];
 
+function Button({ children, onClick }) {
+  return (
+    <button className="button" onClick={onClick}>
+      {children}
+    </button>
+  );
+}
+
 export default function App() {
-  return <div>Hello</div>;
+  const [showAddFriend, setShowAddFriend] = useState(false);
+
+  function handleShowAddFriend() {
+    setShowAddFriend((show) => !show);
+  }
+  return (
+    <div className="app">
+      <div className="sidebar">
+        <FriendList />
+        {showAddFriend && <FormAddFriend />}
+        <Button onClick={handleShowAddFriend}>
+          {showAddFriend ? "Close" : `Add Friend`}
+        </Button>
+      </div>
+      <FormSplitBill />
+    </div>
+  );
+}
+function FriendList() {
+  const friends = initialFriends;
+  return (
+    <ul>
+      {friends.map((friend) => (
+        <Friend friend={friend} key={friend.id} />
+      ))}
+    </ul>
+  );
+}
+
+function Friend({ friend }) {
+  return (
+    <li>
+      <img src={friend.image} alt={friend.name} />
+      <h3>{friend.name}</h3>
+      {friend.balance < 0 && (
+        <p className="red">
+          You Owe {friend.name} {Math.abs(friend.balance)}
+        </p>
+      )}
+      {friend.balance > 0 && (
+        <p className="green">
+          {friend.name} Owes you {friend.balance}
+        </p>
+      )}
+      {friend.balance === 0 && <p>You And {friend.name} are even</p>}
+
+      <Button>Select</Button>
+    </li>
+  );
+}
+
+function FormAddFriend() {
+  return (
+    <form className="form-add-friend">
+      <label>👯Add Friend</label>
+      <input type="text" />
+
+      <label>🌅Image URL</label>
+      <input type="text" />
+
+      <Button>Add</Button>
+    </form>
+  );
+}
+
+function FormSplitBill() {
+  return (
+    <form className="form-split-bill">
+      <h2>Split The Bill With X</h2>
+      <label>💰 How Much is the bill</label>
+      <input type="text" />
+
+      <label>🙋🏼‍♂️ Whats your Split</label>
+      <input type="text" />
+
+      <label>👯 The X's Split</label>
+      <input type="text" disabled />
+
+      <lable>Who Payed</lable>
+      <select>
+        <option value="user">You</option>
+        <option value="friend">X</option>
+      </select>
+      <Button>Split bill</Button>
+    </form>
+  );
 }
